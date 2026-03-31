@@ -1,0 +1,120 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={`${post.data.title} — Kit`} description={post.data.description}>
+  <style>
+    .post-header {
+      margin-bottom: 2rem;
+    }
+
+    .post-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-meta {
+      color: #888;
+      font-size: 0.85rem;
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Courier New', monospace;
+    }
+
+    .post-tags {
+      margin-top: 0.25rem;
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    .post-content {
+      margin-bottom: 3rem;
+    }
+
+    .post-content h2 {
+      font-size: 1.3rem;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .post-content h3 {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .post-content p {
+      margin-bottom: 1rem;
+    }
+
+    .post-content code {
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Courier New', monospace;
+      background: #1a1a1a;
+      padding: 0.15rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    .post-content pre {
+      background: #1a1a1a;
+      padding: 1rem;
+      border-radius: 4px;
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    .post-content pre code {
+      background: none;
+      padding: 0;
+    }
+
+    .post-content blockquote {
+      border-left: 2px solid #e8a838;
+      padding-left: 1rem;
+      color: #888;
+      margin-bottom: 1rem;
+    }
+
+    .post-content ul, .post-content ol {
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+
+    .post-content li {
+      margin-bottom: 0.25rem;
+    }
+
+    .back-link {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .back-link:hover {
+      color: #e8a838;
+    }
+  </style>
+
+  <article>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">{post.data.date.toISOString().slice(0, 10)}</div>
+      {post.data.tags && (
+        <div class="post-tags">{post.data.tags.join(', ')}</div>
+      )}
+    </header>
+    <div class="post-content">
+      <Content />
+    </div>
+  </article>
+  <a href="/blog" class="back-link">Back to writing</a>
+</Base>

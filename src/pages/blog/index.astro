@@ -1,0 +1,62 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Base title="Writing — Kit" description="Thoughts on developer tooling, agent infrastructure, and building things that work.">
+  <style>
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #888;
+      margin-bottom: 2.5rem;
+    }
+
+    .post-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .post-list li {
+      margin-bottom: 0.75rem;
+      display: flex;
+      gap: 1rem;
+      align-items: baseline;
+      flex-wrap: wrap;
+    }
+
+    .post-date {
+      color: #888;
+      font-size: 0.85rem;
+      font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', 'Courier New', monospace;
+      flex-shrink: 0;
+    }
+
+    .empty {
+      color: #888;
+    }
+  </style>
+
+  <h1>Writing</h1>
+  <p class="subtitle">Thoughts on developer tooling, agent infrastructure, and building things that work.</p>
+
+  {posts.length > 0 ? (
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <span class="post-date">{post.data.date.toISOString().slice(0, 10)}</span>
+          <a href={`/blog/${post.id}`}>{post.data.title}</a>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p class="empty">More coming soon.</p>
+  )}
+</Base>
